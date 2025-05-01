@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER FRAME EDITOR</title>
+    <style>
+        :root {
+            --neon-green: #0f0;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --glow: 0 0 10px var(--neon-green);
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background-color: var(--dark-bg);
+            color: var(--neon-green);
+        }
+        
+        h1, h3 {
+            text-shadow: var(--glow);
+            letter-spacing: 2px;
+        }
+        
+        .container {
+            background-color: var(--darker-bg);
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid var(--neon-green);
+            box-shadow: var(--glow);
+            margin-bottom: 20px;
+        }
+        
+        .frame-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            margin: 20px auto;
+            border: 1px dashed var(--neon-green);
+            overflow: hidden;
+        }
+        
+        #background-image {
+            position: absolute;
+            max-width: 100%;
+            max-height: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: move;
+            filter: brightness(100%) contrast(100%) saturate(100%);
+        }
+        
+        #frame-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            transform-origin: center;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid var(--neon-green);
+            border-radius: 5px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .control-group {
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        
+        button {
+            background-color: var(--darker-bg);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            text-shadow: var(--glow);
+            grid-column: span 2;
+        }
+        
+        button:hover {
+            background-color: var(--neon-green);
+            color: var(--dark-bg);
+            box-shadow: var(--glow);
+        }
+        
+        select, input {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid var(--neon-green);
+            background-color: var(--darker-bg);
+            color: var(--neon-green);
+            font-family: 'Courier New', monospace;
+            width: 100%;
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 5px;
+            background: var(--darker-bg);
+            border: 1px solid var(--neon-green);
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: var(--neon-green);
+            cursor: pointer;
+            box-shadow: var(--glow);
+        }
+        
+        .download-btn {
+            background-color: #0a0;
+        }
+        
+        .download-btn:hover {
+            background-color: #0f0;
+        }
+        
+        /* Terminal-like scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--darker-bg);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-green);
+        }
+        
+        /* Typewriter effect for title */
+        .typewriter h1 {
+            overflow: hidden;
+            border-right: .15em solid var(--neon-green);
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .15em;
+            animation: 
+                typing 3.5s steps(40, end),
+                blink-caret .75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--neon-green); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="typewriter">
+            <h1>CYBER FRAME EDITOR</h1>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <h3>FRAME SELECTION</h3>
+                <select id="frame-selector">
+                    <option value="https://i.imgur.com/TmE5lv1.png">Matrix Code</option>
+                    <option value="https://i.imgur.com/9A9A9A9.png">Circuit Board</option>
+                    <option value="https://i.imgur.com/7B7B7B7.png">Hacker Terminal</option>
+                    <option value="https://i.imgur.com/6C6C6C6.png">Binary Rain</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <h3>UPLOAD PHOTO</h3>
+                <input type="file" id="photo-upload" accept="image/*">
+            </div>
+            
+            <div class="control-group">
+                <h3>PHOTO CONTROLS</h3>
+                <label>ZOOM: <input type="range" id="zoom-control" min="50" max="200" value="100"></label>
+                <label>ROTATE: <input type="range" id="rotate-control" min="0" max="360" value="0"></label>
+                <label>BRIGHTNESS: <input type="range" id="brightness-control" min="0" max="200" value="100"></label>
+                <label>CONTRAST: <input type="range" id="contrast-control" min="0" max="200" value="100"></label>
+                <label>SATURATION: <input type="range" id="saturation-control" min="0" max="200" value="100"></label>
+            </div>
+            
+            <div class="control-group">
+                <h3>FRAME CONTROLS</h3>
+                <label>FRAME SCALE: <input type="range" id="frame-scale" min="80" max="120" value="100"></label>
+                <label>FRAME X-POS: <input type="range" id="frame-x" min="-50" max="50" value="0"></label>
+                <label>FRAME Y-POS: <input type="range" id="frame-y" min="-50" max="50" value="0"></label>
+            </div>
+            
+            <button id="center-btn">CENTER PHOTO</button>
+            <button class="download-btn" id="download-btn">DOWNLOAD FRAMED PHOTO</button>
+        </div>
+        
+        <div class="frame-container">
+            <img id="background-image" style="display: none;">
+            <img id="frame-image" src="">
+        </div>
+    </div>
+
+    <script>
+        // Elements
+        const frameSelector = document.getElementById('frame-selector');
+        const photoUpload = document.getElementById('photo-upload');
+        const backgroundImage = document.getElementById('background-image');
+        const frameImage = document.getElementById('frame-image');
+        
+        // Photo Controls
+        const zoomControl = document.getElementById('zoom-control');
+        const rotateControl = document.getElementById('rotate-control');
+        const brightnessControl = document.getElementById('brightness-control');
+        const contrastControl = document.getElementById('contrast-control');
+        const saturationControl = document.getElementById('saturation-control');
+        
+        // Frame Controls
+        const frameScale = document.getElementById('frame-scale');
+        const frameX = document.getElementById('frame-x');
+        const frameY = document.getElementById('frame-y');
+        
+        // Buttons
+        const centerBtn = document.getElementById('center-btn');
+        const downloadBtn = document.getElementById('download-btn');
+
+        // Current state
+        let currentScale = 1;
+        let currentRotate = 0;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+        let startX, startY;
+
+        // Initialize with first frame
+        updateFrame();
+
+        // Event listeners
+        frameSelector.addEventListener('change', updateFrame);
+        photoUpload.addEventListener('change', handlePhotoUpload);
+        
+        // Photo adjustments
+        zoomControl.addEventListener('input', updatePhoto);
+        rotateControl.addEventListener('input', updatePhoto);
+        brightnessControl.addEventListener('input', updatePhoto);
+        contrastControl.addEventListener('input', updatePhoto);
+        saturationControl.addEventListener('input', updatePhoto);
+        
+        // Frame adjustments
+        frameScale.addEventListener('input', updateFramePosition);
+        frameX.addEventListener('input', updateFramePosition);
+        frameY.addEventListener('input', updateFramePosition);
+        
+        centerBtn.addEventListener('click', centerPhoto);
+        downloadBtn.addEventListener('click', downloadFramedPhoto);
+
+        // Make the photo draggable
+        backgroundImage.addEventListener('mousedown', startDrag);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', endDrag);
+
+        function updateFrame() {
+            const selectedFrame = frameSelector.value;
+            frameImage.src = selectedFrame;
+        }
+
+        function handlePhotoUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    backgroundImage.src = event.target.result;
+                    backgroundImage.style.display = 'block';
+                    centerPhoto();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updatePhoto() {
+            currentScale = zoomControl.value / 100;
+            currentRotate = rotateControl.value;
+            
+            backgroundImage.style.filter = `
+                brightness(${brightnessControl.value}%) 
+                contrast(${contrastControl.value}%) 
+                saturate(${saturationControl.value}%)
+            `;
+            
+            applyTransform();
+        }
+
+        function updateFramePosition() {
+            const scale = frameScale.value / 100;
+            const x = frameX.value;
+            const y = frameY.value;
+            
+            frameImage.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+        }
+
+        function centerPhoto() {
+            offsetX = 0;
+            offsetY = 0;
+            applyTransform();
+        }
+
+        function applyTransform() {
+            backgroundImage.style.transform = `
+                translate(-50%, -50%) 
+                scale(${currentScale}) 
+                rotate(${currentRotate}deg)
+                translate(${offsetX}px, ${offsetY}px)
+            `;
+        }
+
+        function startDrag(e) {
+            isDragging = true;
+            startX = e.clientX - offsetX;
+            startY = e.clientY - offsetY;
+            backgroundImage.style.cursor = 'grabbing';
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            offsetX = e.clientX - startX;
+            offsetY = e.clientY - startY;
+            applyTransform();
+        }
+
+        function endDrag() {
+            isDragging = false;
+            backgroundImage.style.cursor = 'grab';
+        }
+
+        function downloadFramedPhoto() {
+            if (!backgroundImage.src || backgroundImage.src === '#') {
+                alert('PLEASE UPLOAD A PHOTO FIRST');
+                return;
+            }
+
+            // Create a canvas to combine the images
+            const canvas = document.createElement('canvas');
+            canvas.width = 500;
+            canvas.height = 500;
+            const ctx = canvas.getContext('2d');
+
+            // Draw the background image first
+            const img = new Image();
+            img.crossOrigin = 'Anonymous'; // For Imgur images
+            img.onload = function() {
+                // Calculate dimensions to maintain aspect ratio
+                let width = img.width;
+                let height = img.height;
+                const aspectRatio = width / height;
+                
+                if (width > height) {
+                    width = 500 * currentScale;
+                    height = width / aspectRatio;
+                } else {
+                    height = 500 * currentScale;
+                    width = height * aspectRatio;
+                }
+                
+                // Draw the image with current transformations
+                ctx.save();
+                ctx.translate(250, 250);
+                ctx.rotate(currentRotate * Math.PI / 180);
+                ctx.translate(offsetX, offsetY);
+                ctx.filter = `
+                    brightness(${brightnessControl.value}%) 
+                    contrast(${contrastControl.value}%) 
+                    saturate(${saturationControl.value}%)
+                `;
+                ctx.drawImage(img, -width/2, -height/2, width, height);
+                ctx.restore();
+
+                // Draw the frame on top
+                const frameImg = new Image();
+                frameImg.crossOrigin = 'Anonymous'; // For Imgur images
+                frameImg.onload = function() {
+                    const frameScaleValue = frameScale.value / 100;
+                    const frameXValue = parseInt(frameX.value);
+                    const frameYValue = parseInt(frameY.value);
+                    
+                    ctx.save();
+                    ctx.translate(250 + frameXValue, 250 + frameYValue);
+                    ctx.scale(frameScaleValue, frameScaleValue);
+                    ctx.drawImage(frameImg, -250, -250, 500, 500);
+                    ctx.restore();
+                    
+                    // Trigger download
+                    const link = document.createElement('a');
+                    link.download = 'cyber-framed-photo.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                };
+                frameImg.src = frameImage.src;
+            };
+            img.src = backgroundImage.src;
+        }
+    </script>
+</body>
+</html>
