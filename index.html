@@ -22,6 +22,70 @@
             text-align: center;
             background-color: var(--dark-bg);
             color: var(--neon-blue);
+            position: relative;
+        }
+        
+        /* Hamburger Menu */
+        .hamburger-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        
+        .hamburger-icon {
+            width: 30px;
+            height: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .hamburger-icon span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: var(--neon-yellow);
+            transition: all 0.3s ease;
+        }
+        
+        .menu-items {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: var(--darker-bg);
+            border: 1px solid var(--neon-blue);
+            box-shadow: var(--blue-glow);
+            border-radius: 5px;
+            padding: 10px;
+            display: none;
+            width: 200px;
+        }
+        
+        .menu-items a, .menu-items button {
+            display: block;
+            color: var(--neon-blue);
+            padding: 8px 10px;
+            text-decoration: none;
+            transition: all 0.3s;
+            text-align: left;
+            width: 100%;
+            background: none;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .menu-items a:hover, .menu-items button:hover {
+            background-color: var(--neon-blue);
+            color: var(--dark-bg);
+        }
+        
+        .premium-plan {
+            color: var(--neon-yellow) !important;
+            font-weight: bold;
         }
         
         h1 {
@@ -35,7 +99,59 @@
             text-shadow: var(--blue-glow);
         }
         
-        .container {
+        /* Login/Signup Container */
+        .auth-container {
+            background-color: var(--darker-bg);
+            padding: 30px;
+            border-radius: 5px;
+            border: 1px solid var(--neon-blue);
+            box-shadow: var(--blue-glow);
+            width: 350px;
+            margin: 50px auto;
+        }
+        
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .auth-form input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--neon-blue);
+            background-color: var(--darker-bg);
+            color: var(--neon-blue);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .auth-form button {
+            background-color: var(--neon-blue);
+            color: var(--dark-bg);
+            border: none;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .auth-form button:hover {
+            background-color: var(--neon-yellow);
+            color: #000;
+        }
+        
+        .auth-switch {
+            margin-top: 15px;
+            color: var(--neon-blue);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        /* Main Editor (hidden by default) */
+        .editor-container {
+            display: none;
             background-color: var(--darker-bg);
             padding: 20px;
             border-radius: 5px;
@@ -112,18 +228,6 @@
             box-shadow: var(--blue-glow);
         }
         
-        .premium-btn {
-            background-color: var(--neon-yellow);
-            color: #000;
-            border: 1px solid var(--neon-yellow);
-            text-shadow: none;
-        }
-        
-        .premium-btn:hover {
-            background-color: #ff0;
-            box-shadow: var(--yellow-glow);
-        }
-        
         .download-btn {
             background-color: #0055ff;
             color: white;
@@ -160,8 +264,21 @@
             box-shadow: var(--blue-glow);
         }
         
-        /* Welcome Notification */
-        .welcome-notification {
+        /* Position Adjustment Controls */
+        .position-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .position-controls label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        /* Premium Notification */
+        .premium-notification {
             position: fixed;
             top: 20px;
             left: 50%;
@@ -174,12 +291,12 @@
             z-index: 1000;
             max-width: 90%;
             width: 400px;
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
         }
         
-        .welcome-notification .close {
+        .premium-notification .close {
             color: var(--neon-blue);
             align-self: flex-end;
             font-size: 20px;
@@ -246,29 +363,63 @@
     </style>
 </head>
 <body>
-    <!-- Welcome Notification -->
-    <div class="welcome-notification" id="welcome-notification">
-        <span class="close" id="close-welcome">&times;</span>
-        <h3 style="margin-top: 0; color: var(--neon-yellow);">GET PREMIUM FOR P20!</h3>
-        <p>Remove watermarks and unlock exclusive features!</p>
-        <button class="premium-btn" style="width: auto; margin-top: 10px;" onclick="document.getElementById('premium-modal').style.display='block'">
-            UPGRADE NOW
-        </button>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburger-menu" style="display: none;">
+        <div class="hamburger-icon" id="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="menu-items" id="menu-items">
+            <a href="https://www.facebook.com/jurex.aso" target="_blank" class="premium-plan">
+                Contact for Premium (Only P20)
+            </a>
+            <button id="menu-logout">Logout</button>
+        </div>
     </div>
 
-    <div class="container">
+    <!-- Login/Signup Container -->
+    <div class="auth-container" id="auth-container">
+        <div id="login-form" class="auth-form">
+            <h2 style="color: var(--neon-yellow);">LOGIN</h2>
+            <input type="text" id="login-username" placeholder="Username" required>
+            <input type="password" id="login-password" placeholder="Password" required>
+            <button id="login-btn">LOGIN</button>
+            <div class="auth-switch" id="show-signup">Don't have an account? Sign up</div>
+        </div>
+        
+        <div id="signup-form" class="auth-form" style="display: none;">
+            <h2 style="color: var(--neon-yellow);">SIGN UP</h2>
+            <input type="text" id="signup-username" placeholder="Username" required>
+            <input type="password" id="signup-password" placeholder="Password" required>
+            <button id="signup-btn">SIGN UP</button>
+            <div class="auth-switch" id="show-login">Already have an account? Login</div>
+        </div>
+    </div>
+
+    <!-- Premium Notification -->
+    <div class="premium-notification" id="premium-notification">
+        <span class="close" id="close-premium-notification">&times;</span>
+        <h3 style="margin-top: 0; color: var(--neon-yellow);">
+            {notificationTitle}
+        </h3>
+        <p>{notificationMessage}</p>
+    </div>
+
+    <!-- Main Editor (hidden until login) -->
+    <div class="editor-container" id="editor-container">
         <div class="typewriter">
-            <h1>NEO FRAME EDITOR</h1>
+            <h1>PREMIUM FRAME EDITOR</h1>
         </div>
         
         <div class="controls">
             <div class="control-group">
                 <h3>FRAME SELECTION</h3>
                 <select id="frame-selector">
-                    <option value="https://i.imgur.com/TmE5lv1.png">Neon Circuit Frame</option>
-                    <option value="https://i.imgur.com/8QZQZQZ.png">Matrix Code</option>
-                    <option value="https://i.imgur.com/9A9A9A9.png">Circuit Board</option>
-                    <option value="https://i.imgur.com/7B7B7B7.png">Hacker Terminal</option>
+                    <option value="https://i.imgur.com/3V8h4UV.png">MCGI FRAME 1</option>
+                    <option value="https://i.imgur.com/K9BEwOy.png">MCGI FRAME 2</option>
+                    <option value="https://i.imgur.com/C9bJ7QX.png">MCGI FRAME 3</option>
+                    <option value="_">Empty</option>
                 </select>
             </div>
             
@@ -284,6 +435,11 @@
                 <label>BRIGHTNESS: <input type="range" id="brightness-control" min="0" max="200" value="100"></label>
                 <label>CONTRAST: <input type="range" id="contrast-control" min="0" max="200" value="100"></label>
                 <label>SATURATION: <input type="range" id="saturation-control" min="0" max="200" value="100"></label>
+                
+                <div class="position-controls">
+                    <label>POSITION X: <input type="range" id="position-x" min="-100" max="100" value="0"></label>
+                    <label>POSITION Y: <input type="range" id="position-y" min="-100" max="100" value="0"></label>
+                </div>
             </div>
             
             <div class="control-group">
@@ -293,7 +449,6 @@
             
             <button id="center-btn">CENTER PHOTO</button>
             <button class="download-btn" id="download-btn">DOWNLOAD FRAMED PHOTO</button>
-            <button class="premium-btn" id="premium-btn">GET PREMIUM (₱20)</button>
         </div>
         
         <div class="frame-container" id="export-area">
@@ -306,30 +461,75 @@
     <div id="premium-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2 style="color: var(--neon-yellow); text-shadow: var(--yellow-glow);">UPGRADE TO PREMIUM</h2>
-            <p>For only <strong>P20</strong>, you can:</p>
-            <ul>
-                <li>Remove watermark from your photos</li>
-                <li>Access exclusive premium frames</li>
-                <li>Get priority support</li>
-            </ul>
-            <p>Message me on Facebook to upgrade:</p>
-            <a href="https://www.facebook.com/jurex.aso" target="_blank" style="color: var(--neon-blue); text-decoration: none; font-weight: bold;">
-                CLICK HERE TO MESSAGE ME
-            </a>
-            <p style="margin-top: 20px;">After payment, send me your email to activate premium features!</p>
+            <h2 style="color: var(--neon-yellow); text-shadow: var(--yellow-glow);">PREMIUM ACCESS</h2>
+            <p>Upgrade to premium for watermark-free downloads and exclusive features!</p>
+            <p>Contact the admin for premium access.</p>
         </div>
     </div>
 
     <script>
+        // Hamburger Menu Functionality
+        const hamburgerMenu = document.getElementById('hamburger-menu');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+        const menuItems = document.getElementById('menu-items');
+        
+        hamburgerMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+            menuItems.style.display = menuItems.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function() {
+            menuItems.style.display = 'none';
+        });
+        
+        // Menu logout functionality
+        document.getElementById('menu-logout').addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
+
+        // Premium accounts database
+        const premiumAccounts = {
+            "Admin": "Admin123",
+            "Premium1": "Premium123",
+            "Premium2": "Premium456",
+            "Premium3": "Premium789",
+            "VIP1": "VIP123",
+            "VIP2": "VIP456",
+            "VIP3": "VIP789",
+            "Gold1": "Gold123",
+            "Gold2": "Gold456",
+            "Gold3": "Gold789"
+        };
+
+        // Regular users database (stored in localStorage)
+        if (!localStorage.getItem('users')) {
+            localStorage.setItem('users', JSON.stringify({}));
+        }
+
         // Elements
+        const authContainer = document.getElementById('auth-container');
+        const editorContainer = document.getElementById('editor-container');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const showSignup = document.getElementById('show-signup');
+        const showLogin = document.getElementById('show-login');
+        const loginBtn = document.getElementById('login-btn');
+        const signupBtn = document.getElementById('signup-btn');
+        const loginUsername = document.getElementById('login-username');
+        const loginPassword = document.getElementById('login-password');
+        const signupUsername = document.getElementById('signup-username');
+        const signupPassword = document.getElementById('signup-password');
+        
+        const premiumNotification = document.getElementById('premium-notification');
+        const closePremiumNotification = document.getElementById('close-premium-notification');
+        
         const frameSelector = document.getElementById('frame-selector');
         const photoUpload = document.getElementById('photo-upload');
         const backgroundImage = document.getElementById('background-image');
         const frameImage = document.getElementById('frame-image');
         const exportArea = document.getElementById('export-area');
-        const welcomeNotification = document.getElementById('welcome-notification');
-        const closeWelcome = document.getElementById('close-welcome');
         
         // Photo Controls
         const zoomControl = document.getElementById('zoom-control');
@@ -337,6 +537,8 @@
         const brightnessControl = document.getElementById('brightness-control');
         const contrastControl = document.getElementById('contrast-control');
         const saturationControl = document.getElementById('saturation-control');
+        const positionX = document.getElementById('position-x');
+        const positionY = document.getElementById('position-y');
         
         // Frame Controls
         const frameScale = document.getElementById('frame-scale');
@@ -344,7 +546,6 @@
         // Buttons
         const centerBtn = document.getElementById('center-btn');
         const downloadBtn = document.getElementById('download-btn');
-        const premiumBtn = document.getElementById('premium-btn');
         
         // Modal elements
         const modal = document.getElementById('premium-modal');
@@ -357,53 +558,193 @@
         let offsetY = 0;
         let isDragging = false;
         let startX, startY;
-        let isPremium = false;
+        let currentUser = null;
+        let isPremiumUser = false;
 
-        // Show welcome notification on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                welcomeNotification.style.display = 'block';
-            }, 1000);
+        // Show/hide auth forms
+        showSignup.addEventListener('click', () => {
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'flex';
         });
 
-        // Close welcome notification
-        closeWelcome.addEventListener('click', () => {
-            welcomeNotification.style.display = 'none';
+        showLogin.addEventListener('click', () => {
+            signupForm.style.display = 'none';
+            loginForm.style.display = 'flex';
         });
 
-        // Initialize with first frame
-        updateFrame();
+        // Close premium notification
+        closePremiumNotification.addEventListener('click', () => {
+            premiumNotification.style.display = 'none';
+        });
 
-        // Event listeners
-        frameSelector.addEventListener('change', updateFrame);
-        photoUpload.addEventListener('change', handlePhotoUpload);
-        
-        // Photo adjustments
-        zoomControl.addEventListener('input', updatePhoto);
-        rotateControl.addEventListener('input', updatePhoto);
-        brightnessControl.addEventListener('input', updatePhoto);
-        contrastControl.addEventListener('input', updatePhoto);
-        saturationControl.addEventListener('input', updatePhoto);
-        
-        // Frame adjustments
-        frameScale.addEventListener('input', updateFrameScale);
-        
-        centerBtn.addEventListener('click', centerPhoto);
-        downloadBtn.addEventListener('click', downloadFramedPhoto);
-        premiumBtn.addEventListener('click', () => modal.style.display = 'block');
-        
-        // Modal close
-        span.addEventListener('click', () => modal.style.display = 'none');
-        window.addEventListener('click', (event) => {
-            if (event.target == modal) {
-                modal.style.display = 'none';
+        // Login function
+        loginBtn.addEventListener('click', () => {
+            const username = loginUsername.value.trim();
+            const password = loginPassword.value.trim();
+            
+            if (!username || !password) {
+                alert('Please enter both username and password');
+                return;
             }
+            
+            // Check premium accounts
+            if (premiumAccounts[username] && premiumAccounts[username] === password) {
+                currentUser = username;
+                isPremiumUser = true;
+                showEditor();
+                showPremiumNotification(true);
+                return;
+            }
+            
+            // Check regular accounts
+            const users = JSON.parse(localStorage.getItem('users'));
+            if (users[username] && users[username] === password) {
+                currentUser = username;
+                isPremiumUser = false;
+                showEditor();
+                showPremiumNotification(false);
+                return;
+            }
+            
+            alert('Invalid username or password');
         });
 
-        // Make the photo draggable
-        backgroundImage.addEventListener('mousedown', startDrag);
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('mouseup', endDrag);
+        // Signup function
+        signupBtn.addEventListener('click', () => {
+            const username = signupUsername.value.trim();
+            const password = signupPassword.value.trim();
+            
+            if (!username || !password) {
+                alert('Please enter both username and password');
+                return;
+            }
+            
+            // Check if username exists in premium accounts
+            if (premiumAccounts[username]) {
+                alert('This username is reserved for premium accounts');
+                return;
+            }
+            
+            // Check if username exists in regular accounts
+            const users = JSON.parse(localStorage.getItem('users'));
+            if (users[username]) {
+                alert('Username already exists');
+                return;
+            }
+            
+            // Add new user
+            users[username] = password;
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            currentUser = username;
+            isPremiumUser = false;
+            showEditor();
+            showPremiumNotification(false);
+        });
+
+        // Show premium notification
+        function showPremiumNotification(isPremium) {
+            const title = isPremium ? "PREMIUM ACCESS GRANTED!" : "WELCOME FREE USER";
+            const message = isPremium 
+                ? "You can now download without watermarks!" 
+                : "Your downloads will include watermarks. Contact admin for premium access.";
+            
+            premiumNotification.innerHTML = `
+                <span class="close" id="close-premium-notification">&times;</span>
+                <h3 style="margin-top: 0; color: var(--neon-yellow);">${title}</h3>
+                <p>${message}</p>
+            `;
+            
+            premiumNotification.style.display = 'flex';
+            
+            // Reattach close event listener
+            document.getElementById('close-premium-notification').addEventListener('click', () => {
+                premiumNotification.style.display = 'none';
+            });
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                premiumNotification.style.display = 'none';
+            }, 5000);
+        }
+
+        // Logout function
+        function logout() {
+            currentUser = null;
+            isPremiumUser = false;
+            editorContainer.style.display = 'none';
+            authContainer.style.display = 'block';
+            hamburgerMenu.style.display = 'none';
+            resetEditor();
+        }
+
+        // Show editor after successful login
+        function showEditor() {
+            authContainer.style.display = 'none';
+            editorContainer.style.display = 'block';
+            hamburgerMenu.style.display = 'block';
+            initEditor();
+        }
+
+        // Initialize editor components
+        function initEditor() {
+            // Initialize with first frame
+            updateFrame();
+
+            // Event listeners
+            frameSelector.addEventListener('change', updateFrame);
+            photoUpload.addEventListener('change', handlePhotoUpload);
+            
+            // Photo adjustments
+            zoomControl.addEventListener('input', updatePhoto);
+            rotateControl.addEventListener('input', updatePhoto);
+            brightnessControl.addEventListener('input', updatePhoto);
+            contrastControl.addEventListener('input', updatePhoto);
+            saturationControl.addEventListener('input', updatePhoto);
+            positionX.addEventListener('input', updatePosition);
+            positionY.addEventListener('input', updatePosition);
+            
+            // Frame adjustments
+            frameScale.addEventListener('input', updateFrameScale);
+            
+            centerBtn.addEventListener('click', centerPhoto);
+            downloadBtn.addEventListener('click', downloadFramedPhoto);
+            
+            // Modal close
+            span.addEventListener('click', () => modal.style.display = 'none');
+            window.addEventListener('click', (event) => {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Make the photo draggable
+            backgroundImage.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', endDrag);
+        }
+
+        // Reset editor state
+        function resetEditor() {
+            backgroundImage.src = '';
+            backgroundImage.style.display = 'none';
+            frameImage.src = '';
+            
+            // Reset controls
+            zoomControl.value = 100;
+            rotateControl.value = 0;
+            brightnessControl.value = 100;
+            contrastControl.value = 100;
+            saturationControl.value = 100;
+            frameScale.value = 100;
+            positionX.value = 0;
+            positionY.value = 0;
+            
+            currentScale = 1;
+            currentRotate = 0;
+            offsetX = 0;
+            offsetY = 0;
+        }
 
         function updateFrame() {
             const selectedFrame = frameSelector.value;
@@ -436,6 +777,12 @@
             applyTransform();
         }
 
+        function updatePosition() {
+            offsetX = parseInt(positionX.value);
+            offsetY = parseInt(positionY.value);
+            applyTransform();
+        }
+
         function updateFrameScale() {
             const scale = frameScale.value / 100;
             frameImage.style.transform = `scale(${scale})`;
@@ -444,6 +791,8 @@
         function centerPhoto() {
             offsetX = 0;
             offsetY = 0;
+            positionX.value = 0;
+            positionY.value = 0;
             applyTransform();
         }
 
@@ -468,6 +817,8 @@
             e.preventDefault();
             offsetX = e.clientX - startX;
             offsetY = e.clientY - startY;
+            positionX.value = offsetX;
+            positionY.value = offsetY;
             applyTransform();
         }
 
@@ -529,20 +880,20 @@
                     ctx.drawImage(frameImg, -250, -250, 500, 500);
                     ctx.restore();
 
-                    // Add watermark if not premium
-                    if (!isPremium) {
+                    // Add watermark if not premium user
+                    if (!isPremiumUser) {
                         ctx.font = 'bold 40px Courier New';
                         ctx.fillStyle = 'rgba(255, 240, 0, 0.7)';
                         ctx.textAlign = 'right';
                         ctx.textBaseline = 'bottom';
                         ctx.shadowColor = '#fff000';
                         ctx.shadowBlur = 10;
-                        ctx.fillText('REX PH', canvas.width - 20, canvas.height - 20);
+                        ctx.fillText('MCGI MIDSALIP', canvas.width - 20, canvas.height - 20);
                     }
 
                     // Trigger download
                     const link = document.createElement('a');
-                    link.download = 'neo-framed-photo.png';
+                    link.download = `frame-${currentUser}-${Date.now()}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 };
@@ -552,4 +903,4 @@
         }
     </script>
 </body>
-                </html>
+</html>
