@@ -360,9 +360,65 @@
             from, to { border-color: transparent }
             50% { border-color: var(--neon-yellow); }
         }
+        
+        /* Music Player Styles */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: var(--darker-bg);
+            border: 1px solid var(--neon-blue);
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: var(--blue-glow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .music-controls button {
+            background: none;
+            border: none;
+            color: var(--neon-blue);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px;
+            margin: 0;
+            grid-column: span 1;
+        }
+        
+        .music-controls button:hover {
+            color: var(--neon-yellow);
+        }
+        
+        .volume-control {
+            width: 80px;
+        }
     </style>
 </head>
 <body>
+    <!-- Background Music (hidden audio element) -->
+    <audio id="background-music" loop>
+        <source src="https://archive.org/download/nariyan-pa-rin-composed-by-bro.-daniel-razon-i-rayden-cabrigas-asop-proud-mcgi-bro-eli-soriano/MCGI%20Theme_%20Kristiyano%20Ako%2C%20Kristiyano%20Tayo.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Music Player Controls -->
+    <div class="music-player" id="music-player">
+        <div class="music-controls">
+            <button id="play-pause-btn">▶</button>
+            <button id="mute-btn">🔊</button>
+            <input type="range" id="volume-control" class="volume-control" min="0" max="1" step="0.1" value="0.5">
+        </div>
+    </div>
+
     <!-- Hamburger Menu -->
     <div class="hamburger-menu" id="hamburger-menu" style="display: none;">
         <div class="hamburger-icon" id="hamburger-icon">
@@ -469,6 +525,50 @@
     </div>
 
     <script>
+        // Initialize background music
+        const backgroundMusic = document.getElementById('background-music');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const muteBtn = document.getElementById('mute-btn');
+        const volumeControl = document.getElementById('volume-control');
+        
+        // Auto-play music (with user interaction fallback)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try to autoplay (may be blocked by browser)
+            const playPromise = backgroundMusic.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    // Autoplay was prevented, show paused state
+                    playPauseBtn.textContent = '▶';
+                });
+            }
+        });
+        
+        // Play/Pause button
+        playPauseBtn.addEventListener('click', function() {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play();
+                playPauseBtn.textContent = '❚❚';
+            } else {
+                backgroundMusic.pause();
+                playPauseBtn.textContent = '▶';
+            }
+        });
+        
+        // Mute button
+        muteBtn.addEventListener('click', function() {
+            backgroundMusic.muted = !backgroundMusic.muted;
+            muteBtn.textContent = backgroundMusic.muted ? '🔇' : '🔊';
+        });
+        
+        // Volume control
+        volumeControl.addEventListener('input', function() {
+            backgroundMusic.volume = volumeControl.value;
+        });
+        
+        // Set initial volume
+        backgroundMusic.volume = volumeControl.value;
+
         // Hamburger Menu Functionality
         const hamburgerMenu = document.getElementById('hamburger-menu');
         const hamburgerIcon = document.getElementById('hamburger-icon');
